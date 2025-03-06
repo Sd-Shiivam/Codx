@@ -22,6 +22,7 @@
 - ✅ **Proxy & Logging Configuration** 📁
 - ✅ **Auto-Persistence Mode** _(Coming Soon)_
 
+![Codx Firewall Dashboard](images/img11.png)
 ![Codx Firewall Dashboard](images/img12.png)
 
 ---
