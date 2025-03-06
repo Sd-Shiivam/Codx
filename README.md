@@ -1,105 +1,93 @@
-# 🔥 Codx Firewall - Advanced Personal Firewall for Safe Browsing
+# 🔥 Codx Firewall - Enterprise-Grade Personal Firewall Solution
 
-![Codx Firewall Home](images/logo.png)
+<div align="center">
+    <img src="images/logo.png" alt="Codx Firewall Logo">
+    <p><em>Advanced Security for Modern Web Browsing</em></p>
+</div>
 
-## 🚀 About Codx Firewall
+## 🚀 Overview
 
-**Codx Firewall** is a cutting-edge **personal firewall** designed for **safe and secure web browsing**. It monitors traffic, blocks malicious content, and provides **real-time security alerts** against **cyber threats**.
+**Codx Firewall** is an enterprise-grade personal firewall engineered to provide military-grade protection for your web activities. Leveraging advanced threat detection algorithms and real-time monitoring, it creates an impenetrable shield against modern cyber threats.
 
-🔹 **Supports:** Windows & Linux _(Cross-platform development in progress)_
+### 🎯 Key Highlights
 
-🔹 **Tech Stack:** Python, mitmproxy, Flask, Tkinter/PyQt (GUI), SQLite
+- 🛡️ **Enterprise-Level Security**
+- 🌐 **Cross-Platform Compatibility**
+- ⚡ **Lightweight & Resource-Efficient**
+- 🔄 **Real-Time Protection**
 
----
+## 💫 Core Features
 
-## ⚡ Features
+### Security Components
 
-- ✅ **Traffic Monitoring Dashboard** 📊
-- ✅ **Advanced Content Blocking** ⛔
-- ✅ **Customizable Traffic Filtering** ⚙️
-- ✅ **Real-time HTTP & Virus Alerts** 🚑
-- ✅ **Sandbox Mode for Manual Control** 🔦
-- ✅ **Proxy & Logging Configuration** 📁
-- ✅ **Auto-Persistence Mode** _(Coming Soon)_
+- 🔍 **Intelligent Traffic Analysis Engine**
+- 🚫 **AI-Powered Content Filtering**
+- 🕵️ **Advanced Threat Detection**
+- 📊 **Real-Time Analytics Dashboard**
 
-![Codx Firewall Dashboard](images/img11.png)
-![Codx Firewall Dashboard](images/img12.png)
+### Management Features
 
----
+- ⚙️ **Granular Control Settings**
+- 📜 **Detailed Activity Logging**
+- 🎮 **User-Friendly Interface**
+- 🔐 **Security Policy Management**
 
-## 🛠️ Installation
+<div align="center">
+    <img src="images/img11.png" alt="Dashboard View" width="45%">
+    <img src="images/img12.png" alt="Analytics View" width="45%">
+</div>
 
-### 🔵 For Windows:
+## 🛠️ Quick Setup
 
-```sh
-# Clone the repository
+### Windows Installation
+
+```powershell
 git clone https://github.com/sd-shiivam/codx.git
 cd codx
-
-# Create virtual environment
 python -m venv firewallEnv
-source firewallEnv/Scripts/activate  # On Windows
-
-# Install dependencies
+.\firewallEnv\Scripts\activate
 pip install -r requirements.txt
-
-# Run the firewall
 python Main.py
 ```
 
-### 🟢 For Linux:
+### Linux Installation
 
-```sh
-# Clone the repository
+```bash
 git clone https://github.com/sd-shiivam/codx.git
 cd codx
-
-# Create virtual environment
 python3 -m venv firewallEnv
-source firewallEnv/bin/activate  # On Linux
-
-# Install dependencies
+source firewallEnv/bin/activate
 pip install -r requirements.txt
-
-# Run the firewall
 python Main.py
 ```
 
----
+## 🎯 Usage Guide
 
-## 🎮 How to Use
+1. 🚀 **Launch Application**: Start the firewall service
+2. 🔍 **Configure Settings**: Set up protection parameters
+3. 📊 **Monitor Activity**: Track through the dashboard
+4. 🛡️ **Enable Protection**: Activate security features
+5. ⚙️ **Fine-tune Rules**: Customize security policies
 
-1️⃣ **Start the firewall** using the Start button.  
-2️⃣ **Monitor traffic** via the Dashboard.  
-3️⃣ **Block content** using the Content Block menu.  
-4️⃣ **Filter traffic** in the Traffic Filter section.  
-5️⃣ **Enable safety alerts** for HTTP/virus detection.  
-6️⃣ **Use Sandbox Mode** for manual request control.  
-7️⃣ **Configure proxy and logging settings** as needed.
+## 🗺️ Roadmap
 
----
+- 🔄 Persistent Configuration System
+- 🌐 Multi-Platform Support Enhancement
+- 📊 Advanced Analytics Integration
+- 🤖 Machine Learning-Based Threat Detection
 
-## 📌 To-Do
+## 🤝 Community
 
-- [ ] **Persistent Configuration Mode** 🔄 _(In Progress)_
-- [ ] **Cross-Platform Support (Windows/Linux)** 💻
-- [ ] **Enhanced Logging & Report Generation** 📁
-- [ ] **Advanced Threat Intelligence Integration** 🛡️
+- 📢 [Report Issues](https://github.com/sd-shiivam/codx/issues)
+- 💡 [Feature Requests](https://github.com/sd-shiivam/codx/pulls)
+- 🌟 [Star us on GitHub](https://github.com/sd-shiivam/codx)
 
----
+## 📜 License
 
-## 🤝 Contributing
-
-Pull requests are welcome! Feel free to **fork** this project and submit improvements. 🚀
+Released under [MIT License](LICENSE)
 
 ---
 
-## 🐝 License
-
-This project is licensed under the **MIT License**.
-
-🔗 **GitHub Repo:** [Codx Firewall](https://github.com/sd-shiivam/codx)
-
----
-
-🌟 **Star this repo** if you like the project! ⭐
+<div align="center">
+    <strong>Protect Your Digital Life with Codx Firewall</strong>
+</div>
