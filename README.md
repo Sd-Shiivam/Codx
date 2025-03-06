@@ -1,4 +1,6 @@
-# 🔥 Codx Firewall - Enterprise-Grade Personal Firewall Solution
+<div align="center">
+<h1> 🔥 Codx Firewall <br> Enterprise-Grade Personal Firewall Solution</h1>
+</div>
 
 <div align="center">
     <img src="images/logo.png" alt="Codx Firewall Logo">
@@ -89,5 +91,5 @@ Released under [MIT License](LICENSE)
 ---
 
 <div align="center">
-    <strong>Protect Your Digital Life with Codx Firewall</strong>
+    <strong>Enter in Your Digital world with Codx Firewall Controls</strong>
 </div>
