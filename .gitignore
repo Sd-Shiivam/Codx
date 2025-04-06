@@ -1,5 +1,6 @@
-__pycache__/
+__pycache__
 menu/__pycache__/
 build.spec
 dist/
 build/
+cert/mitmproxy*
