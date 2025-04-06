@@ -9,9 +9,7 @@ from styles import apply_theme,apply_styles
 class FirewallApp(tk.Tk):
     def __init__(self):
         super().__init__()
-
-        self.manual_mode=False
-        
+    
         self.title("Personal Firewall - SDF")
         self.geometry("1200x800")  
         self.minsize(1200, 800)   
@@ -60,8 +58,7 @@ class FirewallApp(tk.Tk):
             if messagebox.askyesno("Start Firewall", "Are you sure you want to start the firewall?"):
                 self.running = True
                 self.proxy_thread = threading.Thread(target=run_proxy, args=(self.firewall,self.fhost,self.fport,))
-                if not self.manual_mode:
-                    setup_system_proxy(self.fhost,self.fport)
+                setup_system_proxy(self.fhost,self.fport)
                 self.proxy_thread.daemon = True
                 self.proxy_thread.start()
                 self.status_var.set("Firewall: Running")
@@ -70,11 +67,10 @@ class FirewallApp(tk.Tk):
     def stop_firewall(self):
         if self.running:
             if messagebox.askyesno("Stop Firewall", "Are you sure you want to stop the firewall?"):
-                self.running = False
                 if self.proxy_thread:
                     self.firewall.master.shutdown()
-                    if not self.manual_mode:
-                        remove_system_proxy()
+                remove_system_proxy()
+                self.running = False
                 self.status_var.set("Firewall: Stopped")
                 logging.info("Firewall stopped")
 
