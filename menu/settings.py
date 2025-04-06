@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import re
 from styles import apply_styles
+import subprocess
+import os
+import platform
 
 class SettingsMenu(ttk.Frame):
     def __init__(self, parent, controller):
@@ -51,6 +54,7 @@ class SettingsMenu(ttk.Frame):
         btn_frame.grid(row=1, column=0, pady=5, sticky="ew")
         ttk.Button(btn_frame, text="Export Rules", command=self.export_rules, style="Secondary.TButton", width=15).grid(row=0, column=0, padx=5)
         ttk.Button(btn_frame, text="Import Rules", command=self.import_rules, style="Secondary.TButton", width=15).grid(row=0, column=1, padx=5)
+        ttk.Button(btn_frame, text="Install Trust Certificate", command=self.install_cert, style="Secondary.TButton", width=20).grid(row=0, column=2, padx=5)
 
         # Status Bar
         self.status_frame = ttk.Frame(self, style="Status.TFrame", padding=10)
@@ -58,7 +62,7 @@ class SettingsMenu(ttk.Frame):
         self.status_frame.grid_columnconfigure(1, weight=1)
 
         ttk.Label(self.status_frame, text="Status:", style="SubHeader.TLabel").grid(row=0, column=0, padx=5, sticky="w")
-        self.status_label = ttk.Label(self.status_frame, text="Proxy Status: Stopped", foreground="red", style="Status.TLabel")
+        self.status_label = ttk.Label(self.status_frame, text="Proxy Config : 127.0.0.1:8080", foreground="red", style="Status.TLabel")
         self.status_label.grid(row=0, column=1, padx=5, sticky="w")
 
         # self.add_tooltips()
@@ -78,7 +82,7 @@ class SettingsMenu(ttk.Frame):
         
         self.controller.fhost=host
         self.controller.fport=port
-        self.status_label.config(text=f"Proxy Active: {host}:{port}", foreground="green")
+        self.status_label.config(text=f"Proxy config: {host}:{port}", foreground="green")
 
     def toggle_sandbox(self):
         enabled = self.sandbox_var.get()
@@ -108,6 +112,28 @@ class SettingsMenu(ttk.Frame):
         status = "Enabled" if self.sandbox_var.get() else "Disabled"
         color = "green" if self.sandbox_var.get() else "red"
         self.status_label.config(text=f"Sandbox Mode: {status}", foreground=color)
+
+
+    def install_cert(self):
+        try:
+            import sys
+            if getattr(sys, 'frozen', False):
+                base_path = sys._MEIPASS
+            else:
+                base_path = os.path.dirname(__file__)
+            cert_path = os.path.join(base_path, 'images/Codx_ssl.crt')
+            if not os.path.exists(cert_path):
+                messagebox.showerror("Error", "Certificate file not found!")
+                return
+                
+            os_name = platform.system()
+            
+            if os_name == "Windows":
+                subprocess.run(["certutil", "-addstore", "ROOT", cert_path], check=True)
+                messagebox.showinfo("Success", "Certificate has been installed to Windows certificate store.")
+
+        except Exception as e:
+            messagebox.showerror("Installation Failed", f"Could not install certificate: {str(e)}")
 
     # def add_tooltips(self):
     #     self.create_tooltip(self.apply_btn, "Apply proxy host and port settings")

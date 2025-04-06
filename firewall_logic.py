@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from mitmproxy import http
 import threading
-import platform
 import winreg
+import platform
 import subprocess
-import asyncio
+import asyncio,sys,os
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import options
 import queue
@@ -253,7 +253,8 @@ def setup_system_proxy(host="127.0.0.1", port=8080):
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS) as key:
                 winreg.SetValueEx(key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(key, "ProxyServer", 0, winreg.REG_SZ, proxy_address)
-
+            
+            subprocess.run(["netsh", "winhttp", "set", "proxy", proxy_address, "bypass-list=localhost"], check=True)
             logging.info(f"Windows system proxy set to {proxy_address}")
 
         elif "linux" in os_name:
@@ -280,7 +281,6 @@ def setup_system_proxy(host="127.0.0.1", port=8080):
 
 def remove_system_proxy():
     os_name = platform.system().lower()
-
     try:
         if "windows" in os_name:
             key_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
@@ -304,7 +304,6 @@ def remove_system_proxy():
                 messagebox.showinfo("Proxy Removal", "System proxy removed on Linux. Restart your browser if needed.")
             except subprocess.CalledProcessError as e:
                 pass
-
         else:
             logging.error(f"Unsupported OS: {os_name}")
             return
@@ -312,7 +311,19 @@ def remove_system_proxy():
         logging.error(f"Failed to remove system proxy: {e}")
 
 async def start_proxy(firewall,fhost="127.0.0.1",fport=8080):
-    opts = options.Options(listen_host=fhost, listen_port=fport)
+    if True: #for manual mode control dev part
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.dirname(__file__)
+        cert_path = os.path.join(base_path, 'images/Codx_ssl.crt')
+        key_path = os.path.join(base_path, 'images/Codx_ssl.crt')
+        opts = options.Options(listen_host=fhost, listen_port=fport,
+                                ssl_insecure=False, 
+                                certs=[f"*={cert_path}"], 
+                                keyfile=key_path )
+    else:
+        opts = options.Options(listen_host=fhost, listen_port=fport)
     firewall.master = DumpMaster(opts, with_termlog=False, with_dumper=False)
     firewall.master.addons.add(firewall)
     await firewall.master.run()

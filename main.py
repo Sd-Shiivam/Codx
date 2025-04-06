@@ -9,6 +9,9 @@ from styles import apply_theme,apply_styles
 class FirewallApp(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        self.manual_mode=False
+        
         self.title("Personal Firewall - SDF")
         self.geometry("1200x800")  
         self.minsize(1200, 800)   
@@ -49,8 +52,6 @@ class FirewallApp(tk.Tk):
         self.update_ui()
 
     def show_page(self, page_name):
-        print(self.fhost)
-        print(self.fport)
         page = self.pages[page_name]
         page.tkraise()
 
@@ -59,7 +60,8 @@ class FirewallApp(tk.Tk):
             if messagebox.askyesno("Start Firewall", "Are you sure you want to start the firewall?"):
                 self.running = True
                 self.proxy_thread = threading.Thread(target=run_proxy, args=(self.firewall,self.fhost,self.fport,))
-                setup_system_proxy(self.fhost,self.fport)
+                if not self.manual_mode:
+                    setup_system_proxy(self.fhost,self.fport)
                 self.proxy_thread.daemon = True
                 self.proxy_thread.start()
                 self.status_var.set("Firewall: Running")
@@ -71,7 +73,8 @@ class FirewallApp(tk.Tk):
                 self.running = False
                 if self.proxy_thread:
                     self.firewall.master.shutdown()
-                    remove_system_proxy()
+                    if not self.manual_mode:
+                        remove_system_proxy()
                 self.status_var.set("Firewall: Stopped")
                 logging.info("Firewall stopped")
 
@@ -112,6 +115,23 @@ class FirewallApp(tk.Tk):
 
 if __name__ == "__main__":
     import logging
+    import ctypes
+    import sys
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    
     app = FirewallApp()
+    def is_admin():
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
+    
+    if not is_admin():
+        messagebox.showwarning(
+            "Administrator Privileges Required", 
+            "Some firewall features may not work properly without administrator privileges. "
+            "Please restart the application as administrator."
+        )
+    else:
+        logging.info("Running with administrator privileges")
     app.mainloop()
