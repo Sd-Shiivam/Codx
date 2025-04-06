@@ -9,6 +9,7 @@ a = Analysis(
     datas=[
         ('menu/*', 'menu'),      
         ('images/*', 'images'),      
+        ('cert/*', 'cert'),      
         ('dashboard.py', '.'),
         ('firewall_logic.py', '.'),
         ('styles.py', '.'),

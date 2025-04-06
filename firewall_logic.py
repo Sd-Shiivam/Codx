@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from mitmproxy import http
 import threading
-import winreg
+# import winreg
 import platform
 import subprocess
 import asyncio,sys,os
@@ -309,26 +309,27 @@ def remove_system_proxy():
             return
     except Exception as e:
         logging.error(f"Failed to remove system proxy: {e}")
+        messagebox.showerror("Error", f"Failed to set system proxy: {str(e)}")
 
-async def start_proxy(firewall,fhost="127.0.0.1",fport=8080):
-    if True: #for manual mode control dev part
-        if getattr(sys, 'frozen', False):
-            base_path = sys._MEIPASS
-        else:
-            base_path = os.path.dirname(__file__)
-        cert_path = os.path.join(base_path, 'images/Codx_ssl.crt')
-        key_path = os.path.join(base_path, 'images/Codx_ssl.crt')
-        opts = options.Options(listen_host=fhost, listen_port=fport,
-                                ssl_insecure=False, 
-                                certs=[f"*={cert_path}"], 
-                                keyfile=key_path )
-    else:
-        opts = options.Options(listen_host=fhost, listen_port=fport)
+async def start_proxy(firewall,cert_path,fhost="127.0.0.1",fport=8080):
+    opts = options.Options(listen_host=fhost, listen_port=int(fport),
+                            ssl_insecure=False, 
+                            confdir=cert_path)
     firewall.master = DumpMaster(opts, with_termlog=False, with_dumper=False)
     firewall.master.addons.add(firewall)
     await firewall.master.run()
 
 def run_proxy(firewall,fhost,fport):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(start_proxy(firewall,fhost,fport))
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(__file__)
+    cert_path = os.path.join(base_path, 'cert')
+    print(cert_path)
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(start_proxy(firewall,cert_path,fhost,fport))
+    except Exception as e:
+        logging.error(f"Failed to starting system proxy: {e}")
+        messagebox.showerror("Error", f"Failed to set system proxy: {str(e)}")

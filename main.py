@@ -58,10 +58,10 @@ class FirewallApp(tk.Tk):
             if messagebox.askyesno("Start Firewall", "Are you sure you want to start the firewall?"):
                 self.running = True
                 self.proxy_thread = threading.Thread(target=run_proxy, args=(self.firewall,self.fhost,self.fport,))
-                setup_system_proxy(self.fhost,self.fport)
                 self.proxy_thread.daemon = True
                 self.proxy_thread.start()
                 self.status_var.set("Firewall: Running")
+                # setup_system_proxy(self.fhost,self.fport)
                 logging.info("Firewall started")
 
     def stop_firewall(self):
@@ -69,7 +69,7 @@ class FirewallApp(tk.Tk):
             if messagebox.askyesno("Stop Firewall", "Are you sure you want to stop the firewall?"):
                 if self.proxy_thread:
                     self.firewall.master.shutdown()
-                remove_system_proxy()
+                # remove_system_proxy()
                 self.running = False
                 self.status_var.set("Firewall: Stopped")
                 logging.info("Firewall stopped")

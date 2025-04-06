@@ -133,7 +133,7 @@ class SettingsMenu(ttk.Frame):
                 messagebox.showinfo("Success", "Certificate has been installed to Windows certificate store.")
 
         except Exception as e:
-            messagebox.showerror("Installation Failed", f"Could not install certificate: {str(e)}")
+            messagebox.showerror("Installation Failed", "Could not install certificate: Need Admin permisson.Try run as adminstration.")
 
     # def add_tooltips(self):
     #     self.create_tooltip(self.apply_btn, "Apply proxy host and port settings")
