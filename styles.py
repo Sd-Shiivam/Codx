@@ -26,7 +26,28 @@ def apply_theme(root):
 
     style.configure("Toggle.TCheckbutton", font=("Arial", 12), foreground="#ffffff", background="#000000")
     style.map("Toggle.TCheckbutton", background=[("selected", "#007acc")])
+    
+    style.configure("status_label.TLabel", font=("Arial", 15), foreground="#ffffff", background="#1e1e1e")
+
+    style.configure("Modern.TLabelframe", background="#1e1e1e", foreground="#ffffff", borderwidth=2, relief="flat")
+    style.configure("Modern.TLabelframe.Label", font=("Arial", 11, "bold"), foreground="#cccccc", background="#1e1e1e")
+
+    style.configure("Modern.TEntry", fieldbackground="#333333", foreground="#ffffff", bordercolor="#555555", insertcolor="#ffffff")
+    style.map("Modern.TEntry", fieldbackground=[("focus", "#444444")])
+
+    style.configure("Modern.TCheckbutton", font=("Arial", 11), foreground="#ffffff", background="#000000")
+    style.map("Modern.TCheckbutton", 
+              background=[("selected", "#007acc"), ("active", "#333333")],
+              foreground=[("selected", "#ffffff")])
+
+    style.configure("Secondary.TButton", font=("Arial", 11), foreground="#ffffff", background="#6c757d", padding=(8, 5))
+    style.map("Secondary.TButton", background=[("active", "#5a6268")])
+
+    style.configure("Status.TFrame", background="#1e1e1e", relief="sunken", borderwidth=1)
+    style.configure("Status.TLabel", font=("Arial", 10), foreground="#cccccc", background="#1e1e1e")
 
 def apply_styles(widget):
     if isinstance(widget, (tk.Text, tk.Canvas)):
         widget.configure(bg="#000000", fg="#ffffff")
+    if isinstance(widget, tk.Listbox):
+        widget.configure(bg="#333333", fg="#ffffff", selectbackground="#007acc", selectforeground="#ffffff")

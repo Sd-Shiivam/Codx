@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from dashboard import Dashboard
-from firewall_logic import FirewallLogic, run_proxy
+from firewall_logic import FirewallLogic, run_proxy,remove_system_proxy,setup_system_proxy
 import threading
 import queue
-from styles import apply_theme
+from styles import apply_theme,apply_styles
 
 class FirewallApp(tk.Tk):
     def __init__(self):
@@ -14,6 +14,7 @@ class FirewallApp(tk.Tk):
         self.minsize(1200, 800)   
         self.maxsize(1200, 800)    
         apply_theme(self)
+        apply_styles(self)
         self.grid_rowconfigure(0, weight=0) 
         self.grid_columnconfigure(0, weight=0)
 
@@ -27,10 +28,12 @@ class FirewallApp(tk.Tk):
 
 
         self.firewall = FirewallLogic(self, self.queue)
+        self.fhost = "127.0.0.1"
+        self.fport = 8080
         self.running = False
         self.proxy_thread = None
-
         self.pages = {}
+
         self.dashboard = Dashboard(self.container, self)
         self.pages["Dashboard"] = self.dashboard
         self.dashboard.grid(row=0, column=0, sticky="nsew")
@@ -40,12 +43,14 @@ class FirewallApp(tk.Tk):
         self.show_page("Dashboard")
 
         self.status_var = tk.StringVar(value="Firewall: Stopped")
-        status_label = ttk.Label(self, textvariable=self.status_var, style="Subheader.TLabel")
-        status_label.place(x=10, y=50)
+        status_label = ttk.Label(self, textvariable=self.status_var, style="status_label.TLabel")
+        status_label.place(x=50, y=80)
 
         self.update_ui()
 
     def show_page(self, page_name):
+        print(self.fhost)
+        print(self.fport)
         page = self.pages[page_name]
         page.tkraise()
 
@@ -53,11 +58,11 @@ class FirewallApp(tk.Tk):
         if not self.running:
             if messagebox.askyesno("Start Firewall", "Are you sure you want to start the firewall?"):
                 self.running = True
-                self.proxy_thread = threading.Thread(target=run_proxy, args=(self.firewall,))
+                self.proxy_thread = threading.Thread(target=run_proxy, args=(self.firewall,self.fhost,self.fport,))
+                setup_system_proxy(self.fhost,self.fport)
                 self.proxy_thread.daemon = True
                 self.proxy_thread.start()
                 self.status_var.set("Firewall: Running")
-                messagebox.showinfo("Firewall", "Firewall started successfully!")
                 logging.info("Firewall started")
 
     def stop_firewall(self):
@@ -66,8 +71,8 @@ class FirewallApp(tk.Tk):
                 self.running = False
                 if self.proxy_thread:
                     self.firewall.master.shutdown()
+                    remove_system_proxy()
                 self.status_var.set("Firewall: Stopped")
-                messagebox.showinfo("Firewall", "Firewall stopped.")
                 logging.info("Firewall stopped")
 
     def update_ui(self):

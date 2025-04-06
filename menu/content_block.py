@@ -11,7 +11,7 @@ class ContentBlockMenu(ttk.Frame):
         self.configure(width=900, height=800)
         self.grid_columnconfigure(0, weight=1)
 
-        ttk.Label(self, text="🛑 CONTENT BLOCK", style="Header.TLabel").grid(row=0, column=0, pady=25, padx=30)
+        ttk.Label(self, text="CONTENT BLOCK", style="Header.TLabel").grid(row=0, column=0, pady=25, padx=30)
 
         rules_frame = ttk.Frame(self, style="Content.TFrame")
         rules_frame.grid(row=1, column=0, pady=15, padx=30, sticky="nsew")
@@ -21,10 +21,9 @@ class ContentBlockMenu(ttk.Frame):
             "Block JS Files": {"enabled": tk.BooleanVar(value=False), "list": []},
             "Block Image Files": {"enabled": tk.BooleanVar(value=False), "list": []},
             "Block CSS Files": {"enabled": tk.BooleanVar(value=False), "list": []},
-            "Block Malware Domains": {"enabled": tk.BooleanVar(value=False), "list": []},
-            "Block Specific URL": {"enabled": tk.BooleanVar(value=False), "list": []},
-            "Block Specific Text": {"enabled": tk.BooleanVar(value=False), "list": []},
-            "Block Ads": {"enabled": tk.BooleanVar(value=False), "list": []},
+            "Block Domains": {"enabled": tk.BooleanVar(value=False), "list": []},
+            "Block URL": {"enabled": tk.BooleanVar(value=False), "list": []},
+            "Block Text": {"enabled": tk.BooleanVar(value=False), "list": []},
         }
 
         self.rule_widgets = {}
@@ -41,7 +40,7 @@ class ContentBlockMenu(ttk.Frame):
             btn_frame = ttk.Frame(rules_frame)
             btn_frame.grid(row=row, column=2, pady=8, padx=5, sticky="w")
             ttk.Button(btn_frame, text="➕ Add", command=lambda r=rule_name, l=listbox: self.add_to_list(r, l)).grid(row=0, column=0, padx=5)
-            ttk.Button(btn_frame, text="🗑 Remove", command=lambda l=listbox: self.remove_from_list(l)).grid(row=0, column=1, padx=5)
+            ttk.Button(btn_frame, text="🗑 Remove", command=lambda r=rule_name, l=listbox: self.remove_from_list(r,l)).grid(row=0, column=1, padx=5)
 
             self.rule_widgets[rule_name] = {"toggle": toggle, "listbox": listbox}
             row += 1
@@ -50,18 +49,10 @@ class ContentBlockMenu(ttk.Frame):
         custom_frame.grid(row=2, column=0, pady=20, padx=30, sticky="nsew")
         custom_frame.grid_columnconfigure(0, weight=1)
 
-        ttk.Label(custom_frame, text="Add Custom Block Rule:").grid(row=0, column=0, pady=10, padx=10)
-        self.pattern_entry = ttk.Entry(custom_frame, width=50)
-        self.pattern_entry.grid(row=1, column=0, pady=5, padx=10)
-        
-        button_frame = ttk.Frame(custom_frame)
-        button_frame.grid(row=2, column=0, pady=10)
-        ttk.Button(button_frame, text="➕ Add Rule", command=self.add_rule, style="Accent.TButton").grid(row=0, column=0, padx=10)
-        ttk.Button(button_frame, text="🗑 Remove Rule", command=self.remove_rule, style="Accent.TButton").grid(row=0, column=1, padx=10)
-
     def toggle_rule(self, rule_name):
         enabled = self.rules[rule_name]["enabled"].get()
         self.controller.firewall.add_block_rule(rule_name, enabled)
+        
 
     def add_to_list(self, rule_name, listbox):
         if "URL" in rule_name:
@@ -79,11 +70,10 @@ class ContentBlockMenu(ttk.Frame):
             listbox.insert(tk.END, item)
             self.controller.firewall.update_rule_list(rule_name, self.rules[rule_name]["list"])
 
-    def remove_from_list(self, listbox):
+    def remove_from_list(self, rule_name, listbox):
         selected = listbox.curselection()
         if selected:
             item = listbox.get(selected)
-            rule_name = next(r for r, data in self.rules.items() if listbox in [data["listbox"] for data in self.rule_widgets.values()])
             self.rules[rule_name]["list"].remove(item)
             listbox.delete(selected)
             self.controller.firewall.update_rule_list(rule_name, self.rules[rule_name]["list"])

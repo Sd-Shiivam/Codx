@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Canvas
-from styles import apply_styles
+from styles import apply_styles  # Assuming this is in a separate styles.py file
 from collections import deque
 import time
 
@@ -15,31 +15,40 @@ class DashboardMenu(ttk.Frame):
         self.grid_propagate(False)
         self.configure(width=900, height=800)
 
-        header = ttk.Label(self, text="DASHBOARD", style="Header.TLabel", font=("Arial", 16, "bold"))
-        header.grid(row=0, column=0, pady=20, padx=20, sticky="ew", columnspan=1)  # Span multiple columns for centering
+        # Improved Header with subtle shadow effect
+        header_frame = ttk.Frame(self, style="Content.TFrame")
+        header_frame.grid(row=0, column=0, pady=(20, 10), padx=20, sticky="ew")
+        header_frame.grid_columnconfigure(0, weight=1)  # Make column expandable
+        header = ttk.Label(header_frame, text="DASHBOARD", style="Header.TLabel", font=("Arial", 18, "bold"))
+        header.grid(row=0, column=0, pady=5, sticky="ew")
+        header.configure(anchor="center")  # Center the text in the label
+        subheader = ttk.Label(header_frame, text="Network Activity Overview", style="status_label.TLabel", font=("Arial", 10), foreground="#aaaaaa")
+        subheader.grid(row=1, column=0, sticky="ew",pady=(5,5))
+        subheader.configure(anchor="center")  # Center the text in the label
 
+        # Canvas frame with a slight border for depth
         self.canvas_frame = ttk.Frame(self, style="Content.TFrame")
         self.canvas_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         self.canvas_frame.grid_columnconfigure(0, weight=1)
         self.canvas_frame.grid_rowconfigure(0, weight=1)
 
-        self.canvas = Canvas(self.canvas_frame, bg="#121212", height=600, width=860, highlightthickness=0)
+        self.canvas = Canvas(self.canvas_frame, bg="#1e1e1e", height=600, width=860, highlightthickness=0)
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
         self.scrollbar = ttk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
         self.scrollbar.grid(row=0, column=1, sticky="ns")
         style = ttk.Style()
-        style.configure("Vertical.TScrollbar", troughcolor="gray", background="black", borderwidth=1, relief="flat")
+        style.configure("Vertical.TScrollbar", troughcolor="#333333", background="#555555", borderwidth=1, relief="flat")
+        style.map("Vertical.TScrollbar", background=[("active", "#777777")])  # Hover effect
         self.scrollbar.configure(style="Vertical.TScrollbar")
-
 
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.bind("<MouseWheel>", self.on_mousewheel)
-        self.canvas.bind("<Button-4>", self.on_mousewheel)  # Linux scroll up
-        self.canvas.bind("<Button-5>", self.on_mousewheel)  # Linux scroll down
+        self.canvas.bind("<Button-4>", self.on_mousewheel)  
+        self.canvas.bind("<Button-5>", self.on_mousewheel)
 
-        self.traffic_history = deque(maxlen=30)
-        self.alerts_history = deque(maxlen=30)
+        self.traffic_history = deque(maxlen=5000)
+        self.alerts_history = deque(maxlen=5000)
 
         self.draw_network_map()
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -59,12 +68,11 @@ class DashboardMenu(ttk.Frame):
         self.draw_network_map()
 
     def draw_network_map(self):
-        """Draws the network map with sorted and unique entries."""
         self.canvas.delete("all")
 
-        node_height = 30
-        y_start = 20
-        y_spacing = 45
+        node_height = 1000
+        y_start = 30
+        y_spacing = 50  
         x_base = 430
 
         combined_history = list(self.traffic_history) + list(self.alerts_history)
@@ -81,7 +89,7 @@ class DashboardMenu(ttk.Frame):
 
         combined_history.sort(key=extract_timestamp, reverse=True)
 
-        unique_history = deque(maxlen=30)
+        unique_history = deque(maxlen=5000)
         seen = set()
 
         for item in combined_history:
@@ -94,24 +102,34 @@ class DashboardMenu(ttk.Frame):
                 seen.add(key)
                 unique_history.append(item)
 
-        for idx, item in enumerate(reversed(list(unique_history))):
+        for idx, item in enumerate((list(unique_history))):
             y = y_start + idx * y_spacing
 
-            if isinstance(item, tuple): 
+            if isinstance(item, tuple):  # Traffic data
                 domain, timestamp = item
-                self.canvas.create_oval(x_base - 12, y - 12, x_base + 12, y + 12, fill="#e74c3c", outline="#c0392b", width=2)
-                self.canvas.create_text(x_base - 120, y, text=domain, fill="#ffffff", font=("Arial", 10, "bold"), anchor="e")
-                self.canvas.create_text(x_base + 100, y, text=timestamp, fill="#aaaaaa", font=("Arial", 8), anchor="w")
+                # Larger node with hoverable tag
+                node = self.canvas.create_oval(x_base - 15, y - 15, x_base + 15, y + 15, fill="#00aaff", outline="#0088cc", width=2, tags=f"node_{idx}")
+                self.canvas.create_text(x_base - 130, y, text=domain, fill="#ffffff", font=("Arial", 11, "bold"), anchor="e", width=250)
+                self.canvas.create_text(x_base + 130, y, text=timestamp, fill="#cccccc", font=("Arial", 9, "italic"), anchor="w")
 
-            else:  
-                self.canvas.create_oval(x_base - 12, y - 12, x_base + 12, y + 12, fill="#ff5555", outline="#d63031", width=2)
-                self.canvas.create_text(x_base, y, text=item, fill="#ffffff", font=("Arial", 9), anchor="center")
+            else:  # Alert
+                node = self.canvas.create_oval(x_base - 15, y - 15, x_base + 15, y + 15, fill="#ff5555", outline="#cc4444", width=2, tags=f"node_{idx}")
+                self.canvas.create_text(x_base - 130, y, text=item, fill="#ffffff", font=("Arial", 10, "bold"), anchor="e", width=300)
 
+            # Connection line with gradient-like effect
             if idx < len(unique_history) - 1:
                 next_y = y_start + (idx + 1) * y_spacing
-                self.canvas.create_line(x_base, y + 12, x_base, next_y - 12, fill="#66b0ff", width=3, dash=(4, 4))
+                self.canvas.create_line(x_base, y + 15, x_base, next_y - 15, fill="#66b0ff", width=3, dash=(4, 2))
 
-        self.canvas.configure(scrollregion=(0, 0, 860, y_start + len(unique_history) * y_spacing + 20))
+            # Hover effects
+            self.canvas.tag_bind(f"node_{idx}", "<Enter>", lambda e, n=node: self.canvas.itemconfig(n, fill="#f1c40f"))
+            self.canvas.tag_bind(f"node_{idx}", "<Leave>", lambda e, n=node, c="#00aaff" if isinstance(item, tuple) else "#ff5555": self.canvas.itemconfig(n, fill=c))
+
+        # Add a subtle background grid for context
+        for y in range(y_start, int(self.canvas["height"]), 50):
+            self.canvas.create_line(0, y, 860, y, fill="#2a2a2a", width=1, dash=(2, 4))
+
+        self.canvas.configure(scrollregion=(0, 0, 860, y_start + len(unique_history) * y_spacing + 30))
 
     def update_network_map(self):
         self.draw_network_map()
@@ -144,3 +162,4 @@ class DashboardMenu(ttk.Frame):
         step = (target - current) * 0.15
         self.canvas.yview_moveto(current + step)
         self.after(16, self.smooth_scroll)
+

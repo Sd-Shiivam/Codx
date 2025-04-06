@@ -53,27 +53,30 @@ class Dashboard(ttk.Frame):
         self.menu_buttons = {}
         
         logo = ttk.Label(self.left_panel, text="SDF", style="Logo.TLabel", font=("Arial", 28, "bold"))
-        logo.grid(row=0, column=0, pady=(15, 5), padx=15)
+        logo.grid(row=0, column=0, pady=(15, 35), padx=50)
+
+        status_lable_Space = ttk.Label(self.left_panel, text="", style="Logo.TLabel")
+        status_lable_Space.grid(row=1, column=0, pady=(5, 5), padx=50)
         
         for idx, (text, icon, page) in enumerate(menu_items):
             btn = ttk.Button(self.left_panel, text=f"{icon} {text}", command=lambda p=page: self.show_page(p.__name__), 
                              style="Menu.TButton", padding=(5, 10))
-            btn.grid(row=idx + 1, column=0, pady=5, padx=15, sticky="ew")
+            btn.grid(row=idx + 2, column=0, pady=5, padx=50, sticky="ew")
             self.menu_buttons[page.__name__] = btn
         
         date_label = ttk.Label(self.left_panel, text=f"Date: {time.strftime('%d %b %Y')}", style="Date.TLabel")
-        date_label.grid(row=len(menu_items) + 1, column=0, pady=(5, 10), padx=15)
+        date_label.grid(row=len(menu_items) + 2, column=0, pady=(5, 10), padx=50)
         
         self.create_firewall_controls()
 
     def create_firewall_controls(self):
         start_btn = ttk.Button(self.left_panel, text="Start Firewall", command=self.controller.start_firewall, 
                                style="Accent.TButton", padding=(8, 5))
-        start_btn.grid(row=9, column=0, pady=(5, 5), padx=15, sticky="w")
+        start_btn.grid(row=10, column=0, pady=(5, 5), padx=50, sticky="w")
         
         stop_btn = ttk.Button(self.left_panel, text="Stop Firewall", command=self.controller.stop_firewall, 
                               style="Accent.TButton", padding=(8, 5))
-        stop_btn.grid(row=10, column=0, pady=(5, 15), padx=15, sticky="w")
+        stop_btn.grid(row=11, column=0, pady=(5, 15), padx=50, sticky="w")
     
     def load_pages(self):
         for PageClass in (DashboardMenu, ContentBlockMenu, TrafficFilterMenu, SafetyAlertsMenu, SandboxMenu, SettingsMenu, AboutMenu):
