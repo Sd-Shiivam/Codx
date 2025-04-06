@@ -121,7 +121,7 @@ class SettingsMenu(ttk.Frame):
                 base_path = sys._MEIPASS
             else:
                 base_path = os.path.dirname(__file__)
-            cert_path = os.path.join(base_path, 'images/Codx_ssl.crt')
+            cert_path = os.path.join(base_path, 'cert/mitmproxy-ca-cert.cer')
             if not os.path.exists(cert_path):
                 messagebox.showerror("Error", "Certificate file not found!")
                 return
