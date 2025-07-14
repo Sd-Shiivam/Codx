@@ -9,7 +9,7 @@
 
 ## 🚀 Overview
 
-**Codx Firewall** is an enterprise-grade personal firewall engineered to provide military-grade protection for your web activities. Leveraging advanced threat detection algorithms and real-time monitoring, it creates an impenetrable shield against modern cyber threats.
+**Codx Firewall** is an enterprise-grade personal firewall engineered to provide high-grade protection for your web activities. Leveraging advanced threat detection algorithms and real-time monitoring, it creates an impenetrable shield against modern cyber threats.
 
 ### 🎯 Key Highlights
 
